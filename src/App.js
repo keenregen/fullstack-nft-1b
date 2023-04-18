@@ -2,6 +2,32 @@ import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
+import Web3 from "web3";
+
+async function connectWallet() {
+  try {
+    if (window.ethereum) {
+      var web3 = new Web3(window.ethereum);
+      await window.ethereum.send("eth_requestAccount");
+      var accounts = await web3.eth.getAccounts();
+      var account = accounts[0];
+      document.getElementById("wallet-address").textContent = account;
+
+      contract = new web3.eth.Contract(ABI, ADDRESS);
+      document.getElementById("mint").onClick = async () => {
+        var _mintAmount = Number(document.querySelector("[name=amount]").value);
+        // gas fees + other payings
+        var mintRate = Number(await contract.methods.cost().call());
+        var totalAmount = _mintAmount * mintRate;
+        contract.methods
+          .mint(account, _mintAmount)
+          .send({ from: account, value: String(totalAmount) });
+      };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 function App() {
   return (
@@ -22,7 +48,9 @@ function App() {
           >
             <h4>Mint Portal</h4>
             <h5>Use The Button To Connect Your Wallet</h5>
-            <Button style={{ marginBottom: "7px" }}>Connect Wallet</Button>
+            <Button onClick={connectWallet} style={{ marginBottom: "7px" }}>
+              Connect Wallet
+            </Button>
             <div
               className="card"
               id="wallet-address"
