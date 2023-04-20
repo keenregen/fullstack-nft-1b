@@ -8,24 +8,25 @@ async function connectWallet() {
   try {
     if (window.ethereum) {
       var web3 = new Web3(window.ethereum);
-      await window.ethereum.send("eth_requestAccount");
+      await window.ethereum.send("eth_requestAccounts");
       var accounts = await web3.eth.getAccounts();
-      var account = accounts[0];
+      account = accounts[0];
       document.getElementById("wallet-address").textContent = account;
-
       contract = new web3.eth.Contract(ABI, ADDRESS);
-      document.getElementById("mint").onClick = async () => {
-        var _mintAmount = Number(document.querySelector("[name=amount]").value);
-        // gas fees + other payings
-        var mintRate = Number(await contract.methods.cost().call());
-        var totalAmount = _mintAmount * mintRate;
-        contract.methods
-          .mint(account, _mintAmount)
-          .send({ from: account, value: String(totalAmount) });
-      };
     }
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function mint() {
+  if (window.ethereum) {
+    var _mintAmount = Number(document.querySelector("[name=amount]").value);
+    var mintRate = Number(await contract.methods.cost().call());
+    var totalAmount = mintRate * _mintAmount;
+    contract.methods
+      .mint(account, _mintAmount)
+      .send({ from: account, value: String(totalAmount) });
   }
 }
 
@@ -73,10 +74,13 @@ function App() {
                 min="1"
                 max="3"
               />
-              <Button style={{ marginTop: "3px", marginBottom: "3px" }}>
+              <Button
+                onClick={mint}
+                style={{ marginTop: "3px", marginBottom: "3px" }}
+              >
                 Mint/Buy
               </Button>
-              <label>Price: 0.001 ETH per NFT.</label>
+              <label>Price: 0.00001 ETH per NFT.</label>
             </div>
           </form>
         </div>
