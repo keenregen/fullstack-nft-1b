@@ -16,10 +16,7 @@ async function connectWallet() {
       var accounts = await web3.eth.getAccounts();
       account = accounts[0];
       document.getElementById("wallet-address").textContent =
-        "Connected Wallet Address: " +
-        account.slice(0, 5) +
-        "..." +
-        account.slice(-4);
+        "Connected Wallet: " + account.slice(0, 5) + "..." + account.slice(-4);
       document.getElementById("connect-button").textContent = "Connected";
       contract = new web3.eth.Contract(ABI, ADDRESS);
     }
@@ -105,7 +102,9 @@ function App() {
               }}
             >
               <h5 style={{ marginTop: "5px" }}>
-                Select the amount of NFTs to mint (min:1, max:3)
+                Enter the amount of NFTs to mint
+                <br />
+                (min:1, max:3)
               </h5>
               <input
                 style={{
