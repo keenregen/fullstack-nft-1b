@@ -7,6 +7,8 @@ import { ADDRESS } from "./address";
 
 var account;
 var contract;
+const bscApiKey = process.env.bscTestEtherScanApiKey0;
+const bscEndPoint = process.env.bscTestEtherScanEndPoint;
 
 async function connectWallet() {
   try {
