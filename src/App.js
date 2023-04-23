@@ -124,7 +124,7 @@ function App() {
               >
                 Mint/Buy
               </Button>
-              <h5>Price: 0.00001 ETH per NFT.</h5>
+              <h5>Price: 0.01 ETH per NFT.</h5>
             </div>
           </form>
         </div>
