@@ -31,7 +31,7 @@ async function mint() {
       var _mintAmount = Number(document.querySelector("[name=amount]").value);
       var mintRate = Number(await contract.methods.cost().call());
       var totalAmount = mintRate * _mintAmount;
-      if (String(await contract.methods.owner().call()) == String(account)) {
+      if (String(await contract.methods.owner().call()) === String(account)) {
         await contract.methods
           .mint(account, _mintAmount)
           .send({ from: account });
