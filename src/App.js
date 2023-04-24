@@ -3,12 +3,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import Web3 from "web3";
 import { ABI } from "./abi";
-import { ADDRESS } from "./address";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const bscEndPoint = process.env.REACT_APP_BSC_TEST_ESCAN_END_POINT;
+const ADDRESS = process.env.REACT_APP_CON_ADDRESS;
+const BSCAPIKEY = process.env.REACT_APP_BSC_TEST_API_KEY;
 
 var account;
 var contract;
-const bscApiKey = process.env.bscTestEtherScanApiKey0;
-const bscEndPoint = process.env.bscTestEtherScanEndPoint;
 
 async function connectWallet() {
   try {
@@ -26,6 +29,8 @@ async function connectWallet() {
     console.log(err);
   }
 }
+
+// async function maxAmount() {}
 
 async function mint() {
   try {
@@ -49,6 +54,31 @@ async function mint() {
 }
 
 function App() {
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    console.log(ADDRESS);
+    console.log(BSCAPIKEY);
+    axios
+      .get(
+        bscEndPoint +
+          `?module=stats&action=tokensupply&contractaddress=${ADDRESS}&apikey=${BSCAPIKEY}`
+      )
+      .then((res) => setBalance(res.data.result))
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("Cancelled!");
+        } else {
+          //todo:errorHandling
+        }
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [balance]);
+
   return (
     <div className="App">
       <div className="container">
@@ -127,6 +157,7 @@ function App() {
                 Mint/Buy
               </Button>
               <h5>Price: 0.01 ETH per NFT.</h5>
+              <h5>NFTs minted in the collection so far: {balance} out of 4</h5>
             </div>
           </form>
         </div>
