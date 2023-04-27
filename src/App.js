@@ -55,32 +55,15 @@ async function mint() {
 
 function App() {
   const [balance, setBalance] = useState(0);
-  const [nftData, setNftData] = useState([
-    {
-      id: "0",
-      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_0.png",
-      title: "NftCollectionZero",
-      buttonText: "Buy Now",
-    },
-    {
-      id: "1",
-      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
-      title: "NftCollectionZero",
-      buttonText: "Buy Now",
-    },
-    {
-      id: "2",
-      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
-      title: "NftCollectionZero",
-      buttonText: "Buy Now",
-    },
-    {
-      id: "3",
-      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
-      title: "NftCollectionZero",
-      buttonText: "Buy Now",
-    },
-  ]);
+  const [nftData, setNftData] = useState([]);
+  let nftTokenIdsList = [];
+  let nftTosList = [];
+  let nftDataList = [
+    { id: 0, to: 0 },
+    { id: 1, to: 1 },
+    { id: 2, to: 2 },
+    { id: 3, to: 3 },
+  ];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -105,28 +88,35 @@ function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-    // axios
-    //   .get(
-    //     bscEndPoint +
-    //       `?module=stats&action=tokensupply&contractaddress=${ADDRESS}&apikey=${BSCAPIKEY}`
-    //   )
-    //   .then((res) => setBalance(res.data.result))
-    //   .catch((err) => {
-    //     if (err.name === "AbortError") {
-    //       console.log("Cancelled!");
-    //     } else {
-    //       //todo:errorHandling
-    //     }
-    //   });
-
-    setNftData(nftData);
-
-    console.log(nftData);
+    axios
+      .get(
+        bscEndPoint +
+          `?module=account&action=tokennfttx&contractaddress=${ADDRESS}&page=1&offset=100&tag=latest&apikey=${BSCAPIKEY}`
+      )
+      .then((res) => {
+        for (let i = 0; i < res.data.result.length; i++) {
+          nftDataList[i].id = res.data.result[i].tokenID;
+          nftDataList[i].to = res.data.result[i].to;
+          console.log(nftDataList[i]);
+        }
+      })
+      .then(() => {
+        setNftData(nftDataList);
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("Cancelled!");
+        } else {
+          //todo:errorHandling
+        }
+      });
 
     return () => {
       controller.abort();
     };
-  }, [nftData]);
+  }, [setNftData]); // ask about dependency array
+
+  console.log(nftData);
 
   return (
     <div className="App">
@@ -218,17 +208,17 @@ function App() {
                 >
                   <div className="card">
                     <div className="image-over">
-                      <img className="card-img-top" src={item.img} alt="" />
+                      <img className="card-img-top" src={item.to} alt="" />
                     </div>
                     <div className="card-caption col-12 p-0">
                       <div className="card-body">
                         <h5 className="mb-0">
-                          {item.title}#{item.id}
+                          {id}#{item.to}
                         </h5>
                         <div className="card-bottom d-flex justify-content-center">
                           <Button className="btn btn-bordered-white btn-smaller mt-3">
                             <i className="mr-2" />
-                            {item.buttonText}
+                            Buy
                           </Button>
                         </div>
                       </div>
