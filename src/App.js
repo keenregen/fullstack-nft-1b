@@ -55,11 +55,35 @@ async function mint() {
 
 function App() {
   const [balance, setBalance] = useState(0);
+  const [nftData, setNftData] = useState([
+    {
+      id: "0",
+      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_0.png",
+      title: "NftCollectionZero",
+      buttonText: "Buy Now",
+    },
+    {
+      id: "1",
+      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
+      title: "NftCollectionZero",
+      buttonText: "Buy Now",
+    },
+    {
+      id: "2",
+      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
+      title: "NftCollectionZero",
+      buttonText: "Buy Now",
+    },
+    {
+      id: "3",
+      img: "https://bafybeie55y2wjuzzfnwxre52x6fviyoueoxnght7x27d3hnvbzvasvqqiu.ipfs.dweb.link/geo_1.png",
+      title: "NftCollectionZero",
+      buttonText: "Buy Now",
+    },
+  ]);
 
   useEffect(() => {
     const controller = new AbortController();
-    console.log(ADDRESS);
-    console.log(BSCAPIKEY);
     axios
       .get(
         bscEndPoint +
@@ -79,10 +103,35 @@ function App() {
     };
   }, [balance]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    // axios
+    //   .get(
+    //     bscEndPoint +
+    //       `?module=stats&action=tokensupply&contractaddress=${ADDRESS}&apikey=${BSCAPIKEY}`
+    //   )
+    //   .then((res) => setBalance(res.data.result))
+    //   .catch((err) => {
+    //     if (err.name === "AbortError") {
+    //       console.log("Cancelled!");
+    //     } else {
+    //       //todo:errorHandling
+    //     }
+    //   });
+
+    setNftData(nftData);
+
+    console.log(nftData);
+
+    return () => {
+      controller.abort();
+    };
+  }, [nftData]);
+
   return (
     <div className="App">
       <div className="container">
-        <div className="row">
+        <div className="row justify-content-center">
           <form
             className="col-lg-5"
             style={{
@@ -160,6 +209,35 @@ function App() {
               <h5>NFTs minted in the collection so far: {balance} out of 4</h5>
             </div>
           </form>
+          <div className="row items mt-3 mb-3 justify-content-center">
+            {nftData.map((item, id) => {
+              return (
+                <div
+                  key={`exo_${id}`}
+                  className="col-12 col-sm-6 col-lg-3 item"
+                >
+                  <div className="card">
+                    <div className="image-over">
+                      <img className="card-img-top" src={item.img} alt="" />
+                    </div>
+                    <div className="card-caption col-12 p-0">
+                      <div className="card-body">
+                        <h5 className="mb-0">
+                          {item.title}#{item.id}
+                        </h5>
+                        <div className="card-bottom d-flex justify-content-center">
+                          <Button className="btn btn-bordered-white btn-smaller mt-3">
+                            <i className="mr-2" />
+                            {item.buttonText}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
