@@ -56,8 +56,6 @@ async function mint() {
 function App() {
   const [balance, setBalance] = useState(0);
   const [nftData, setNftData] = useState([]);
-  let nftTokenIdsList = [];
-  let nftTosList = [];
   let nftDataList = [
     { id: 0, to: 0 },
     { id: 1, to: 1 },
@@ -97,7 +95,6 @@ function App() {
         for (let i = 0; i < res.data.result.length; i++) {
           nftDataList[i].id = res.data.result[i].tokenID;
           nftDataList[i].to = res.data.result[i].to;
-          console.log(nftDataList[i]);
         }
       })
       .then(() => {
