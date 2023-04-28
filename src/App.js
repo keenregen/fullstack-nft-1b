@@ -9,6 +9,8 @@ import axios from "axios";
 const bscEndPoint = process.env.REACT_APP_BSC_TEST_ESCAN_END_POINT;
 const ADDRESS = process.env.REACT_APP_CON_ADDRESS;
 const BSCAPIKEY = process.env.REACT_APP_BSC_TEST_API_KEY;
+const nftpng =
+  "https://ipfs.io/ipfs/QmYy9PdRGH24uUVd32ScJSB4Barvki2Dp543JcxmtChtu2/geo_";
 
 var account;
 var contract;
@@ -24,6 +26,8 @@ async function connectWallet() {
         "Connected Wallet: " + account.slice(0, 5) + "..." + account.slice(-4);
       document.getElementById("connect-button").textContent = "Connected";
       contract = new web3.eth.Contract(ABI, ADDRESS);
+      document.getElementById("mint-button").textContent =
+        "Mint NFT(s) from The RegenWay Collection";
     }
   } catch (err) {
     console.log(err);
@@ -47,6 +51,8 @@ async function mint() {
           .mint(account, _mintAmount)
           .send({ from: account, value: String(totalAmount) });
       }
+    } else {
+      console.log("Connect Your Wallet first");
     }
   } catch (err) {
     console.log(err);
@@ -57,10 +63,10 @@ function App() {
   const [balance, setBalance] = useState(0);
   const [nftData, setNftData] = useState([]);
   let nftDataList = [
-    { id: 0, to: 0 },
-    { id: 1, to: 1 },
-    { id: 2, to: 2 },
-    { id: 3, to: 3 },
+    { id: "", to: "" },
+    { id: "", to: "Not Minted Yet" },
+    { id: "", to: "Not Minted Yet" },
+    { id: "", to: "Not Minted Yet" },
   ];
 
   useEffect(() => {
@@ -92,14 +98,15 @@ function App() {
           `?module=account&action=tokennfttx&contractaddress=${ADDRESS}&page=1&offset=100&tag=latest&apikey=${BSCAPIKEY}`
       )
       .then((res) => {
-        for (let i = 0; i < res.data.result.length; i++) {
-          nftDataList[i].id = res.data.result[i].tokenID;
-          nftDataList[i].to = res.data.result[i].to;
+        if (res.data.result.length !== 0) {
+          for (let i = 0; i < res.data.result.length; i++) {
+            nftDataList[i].id = res.data.result[i].tokenID;
+            nftDataList[i].to = res.data.result[i].to;
+          }
+          setNftData(nftDataList);
         }
       })
-      .then(() => {
-        setNftData(nftDataList);
-      })
+
       .catch((err) => {
         if (err.name === "AbortError") {
           console.log("Cancelled!");
@@ -187,10 +194,11 @@ function App() {
                 max="3"
               />
               <Button
+                id="mint-button"
                 onClick={mint}
                 style={{ marginTop: "5px", marginBottom: "3px" }}
               >
-                Mint/Buy
+                You Should Connect Your Wallet To Mint An Nft
               </Button>
               <h5>Price: 0.01 ETH per NFT.</h5>
               <h5>NFTs minted in the collection so far: {balance} out of 4</h5>
@@ -205,12 +213,23 @@ function App() {
                 >
                   <div className="card">
                     <div className="image-over">
-                      <img className="card-img-top" src={item.to} alt="" />
+                      <img
+                        className="card-img-top"
+                        src={nftpng + id + ".png"}
+                        alt=""
+                      />
                     </div>
                     <div className="card-caption col-12 p-0">
                       <div className="card-body">
-                        <h5 className="mb-0">
-                          {id}#{item.to}
+                        <h5 className="mb-0" style={{ fontWeight: "bold" }}>
+                          {"Nft Collection FullB"}#{id}
+                        </h5>
+                        <h5 className="mb-0 mt-2">
+                          <span style={{ textDecoration: "underline" }}>
+                            Owner Address:
+                          </span>
+                          <br />
+                          {item.to.slice(0, 5) + "..." + item.to.slice(-4)}
                         </h5>
                         <div className="card-bottom d-flex justify-content-center">
                           <Button className="btn btn-bordered-white btn-smaller mt-3">
